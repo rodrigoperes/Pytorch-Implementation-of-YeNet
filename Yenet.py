@@ -3,20 +3,20 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-srm_16filters = np.load('./srm_16_filters.npy')
-srm_minmax = np.load('./minmax_filters.npy')
-srm_filters = np.concatenate((srm_16filters, srm_minmax),axis=0)
-
-srm_filters = torch.from_numpy(srm_filters).to(device=device, dtype=torch.float)
-srm_filters = torch.autograd.Variable(srm_filters, requires_grad=True)
-# print(srm_filters.shape)
-
 class Yenet(nn.Module):
 	def __init__(self):
-		super(Yenet, self).__init__()
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
+        srm_16filters = np.load('./srm_16_filters.npy')
+        srm_minmax = np.load('./minmax_filters.npy')
+        srm_filters = np.concatenate((srm_16filters, srm_minmax),axis=0)
+
+        srm_filters = torch.from_numpy(srm_filters).to(device=device, dtype=torch.float)
+        srm_filters = torch.autograd.Variable(srm_filters, requires_grad=True)
+        print(srm_filters.shape)
+        
+		super(Yenet, self).__init__()
+        
 		self.tlu = nn.Hardtanh(min_val=-3.0, max_val=3.0)
 
 		self.conv2 = nn.Conv2d(30, 30, kernel_size=3, stride=1, padding=0)
